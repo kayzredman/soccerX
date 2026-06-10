@@ -34,3 +34,7 @@ coverage/
 
 # drizzle
 drizzle/meta/_journal.json.bak
+
+# python (ui-ux-pro-max skill cache)
+__pycache__/
+*.pyc
