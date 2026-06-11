@@ -71,8 +71,10 @@ export const users = sx.table(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     clerkUserId: text("clerk_user_id").unique(),
-    email: text("email"),
+    email: text("email").notNull(),
     handle: text("handle").notNull(),
+    name: text("name"),
+    image: text("image"),
     country: text("country"), // ISO 3166-1 alpha-2
     archetype: archetypeEnum("archetype"),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -81,6 +83,7 @@ export const users = sx.table(
   },
   (t) => ({
     handleUnique: uniqueIndex("users_handle_lower_unique").on(t.handle),
+    emailUnique: uniqueIndex("users_email_unique").on(t.email),
   }),
 );
 

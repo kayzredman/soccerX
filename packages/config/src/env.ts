@@ -9,13 +9,20 @@ const EnvSchema = z.object({
   // redis / queue
   REDIS_URL: z.string().url(),
 
-  // auth (Clerk)
+  // auth — Clerk (web hosts UI, API verifies session tokens)
   CLERK_SECRET_KEY: z.string().optional(),
+  CLERK_PUBLISHABLE_KEY: z.string().optional(),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+  CLERK_WEBHOOK_SECRET: z.string().optional(),
+  CLERK_JWT_ISSUER: z.string().optional(),
 
-  // football data provider
+  // football data provider (api-football via RapidAPI)
   FOOTBALL_API_KEY: z.string().optional(),
-  FOOTBALL_API_BASE_URL: z.string().url().optional(),
+  FOOTBALL_API_BASE_URL: z
+    .string()
+    .url()
+    .default("https://v3.football.api-sports.io"),
+  FOOTBALL_API_HOST: z.string().default("v3.football.api-sports.io"),
 
   // web
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
@@ -32,6 +39,8 @@ const EnvSchema = z.object({
     .int()
     .positive()
     .default(60_000),
+  // dev-only: simulate live match progress every N ms (0 = disabled)
+  LIVE_SIM_TICK_MS: z.coerce.number().int().nonnegative().default(5_000),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
