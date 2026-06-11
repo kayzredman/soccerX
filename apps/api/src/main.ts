@@ -6,6 +6,7 @@ import { standingsRoutes } from "./routes/standings";
 import { liveRoutes } from "./routes/live";
 import { picksRoutes } from "./routes/picks";
 import { leaguesRoutes } from "./routes/leagues";
+import { leaderboardRoutes } from "./routes/leaderboard";
 
 async function bootstrap() {
   const env = getEnv();
@@ -37,6 +38,7 @@ async function bootstrap() {
   await app.register(liveRoutes);
   await app.register(picksRoutes);
   await app.register(leaguesRoutes);
+  await app.register(leaderboardRoutes);
 
   try {
     const address = await app.listen({ port: env.API_PORT, host: "0.0.0.0" });
