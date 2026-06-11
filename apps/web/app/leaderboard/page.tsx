@@ -1,18 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { MOCK_LEADERBOARD } from "@/lib/mock";
+import { MOCK_LEADERBOARD, type MockLeader } from "@/lib/mock";
+import { fetchGlobalLeaderboard, type ApiLeaderboardRow } from "@/lib/api";
 import { SceneBackground } from "@/components/scene-background";
 import { SCENES } from "@/lib/scenes";
 
 const SCOPES = ["Global", "Ghana", "My league"] as const;
 type Scope = (typeof SCOPES)[number];
 
+function apiRowToLeader(r: ApiLeaderboardRow): MockLeader {
+  return {
+    rank: r.rank,
+    userId: r.userId,
+    handle: r.handle,
+    points: r.totalPoints,
+    streak: 0,
+    delta: 0,
+  };
+}
+
 export default function LeaderboardPage() {
   const [scope, setScope] = useState<Scope>("Global");
-  const top3 = MOCK_LEADERBOARD.slice(0, 3);
-  const rest = MOCK_LEADERBOARD.slice(3);
+  const [liveRows, setLiveRows] = useState<MockLeader[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (scope !== "Global") {
+      setLiveRows(null);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    fetchGlobalLeaderboard(100)
+      .then((rows) => {
+        if (cancelled) return;
+        setLiveRows(rows.length > 0 ? rows.map(apiRowToLeader) : []);
+      })
+      .catch(() => {
+        if (!cancelled) setLiveRows([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [scope]);
+
+  const isLive = scope === "Global" && (liveRows?.length ?? 0) > 0;
+  const board: MockLeader[] = isLive && liveRows ? liveRows : MOCK_LEADERBOARD;
+  const top3 = board.slice(0, 3);
+  const rest = board.slice(3);
 
   return (
     <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12">
@@ -27,6 +68,15 @@ export default function LeaderboardPage() {
           </h1>
           <p className="mt-2 max-w-xl text-sm text-fg-muted">
             Live standings across the tournament. Refreshed every match.
+          </p>
+          <p className="mt-2 text-[10px] font-mono uppercase tracking-[0.25em] text-fg-dim">
+            {scope !== "Global"
+              ? "preview · scope not live yet"
+              : loading
+                ? "loading…"
+                : isLive
+                  ? "live · global"
+                  : "preview · no score events yet"}
           </p>
         </div>
         <div className="flex gap-1 rounded-xl border border-line/10 bg-surface-2 p-1">
@@ -121,7 +171,7 @@ export default function LeaderboardPage() {
   );
 }
 
-function Podium({ top3 }: { top3: typeof MOCK_LEADERBOARD }) {
+function Podium({ top3 }: { top3: MockLeader[] }) {
   const order = [top3[1], top3[0], top3[2]];
   const heights = ["h-32", "h-44", "h-24"];
   const colors = [

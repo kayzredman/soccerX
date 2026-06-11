@@ -8,6 +8,13 @@
       "when": 1781126605754,
       "tag": "0000_optimal_queen_noir",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781150769334,
+      "tag": "0001_users_clerk_id",
+      "breakpoints": true
     }
   ]
 }
