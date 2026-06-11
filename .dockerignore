@@ -1,0 +1,21 @@
+# Files excluded from Docker build context (all 3 services share this root context).
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/.cache
+**/coverage
+**/.DS_Store
+.git
+.github
+.vscode
+docs
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.local
+**/.env.*.local
+*.tsbuildinfo
+**/*.log
+README.md
