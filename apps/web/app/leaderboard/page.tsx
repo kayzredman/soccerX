@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MOCK_LEADERBOARD, type MockLeader } from "@/lib/mock";
-import { fetchGlobalLeaderboard, type ApiLeaderboardRow } from "@/lib/api";
+import { fetchGlobalLeaderboard, type ApiLeaderboardRow } from "@/lib/api-public";
 import { SceneBackground } from "@/components/scene-background";
 import { SCENES } from "@/lib/scenes";
 

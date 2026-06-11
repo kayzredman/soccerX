@@ -192,28 +192,7 @@ export async function saveMyGroupPicks(
 }
 
 // ===== Leaderboard (public) ==============================================
-
-export type ApiLeaderboardRow = {
-  rank: number;
-  userId: string;
-  handle: string;
-  name: string | null;
-  image: string | null;
-  country: string | null;
-  totalPoints: number;
-};
-
-/**
- * Fetches the global leaderboard. Returns [] when the API is unreachable or
- * no score events exist yet — callers can fall back to mock data for the
- * pre-tournament UI.
- */
-export async function fetchGlobalLeaderboard(
-  limit = 50,
-): Promise<ApiLeaderboardRow[]> {
-  const data = await safePublicFetch<{
-    source: "cache" | "live";
-    rows: ApiLeaderboardRow[];
-  }>(`/tournaments/${SLUG}/leaderboard?limit=${limit}`);
-  return data?.rows ?? [];
-}
+// Re-exported from api-public so server-side callers can import from one place.
+// Client components should import directly from "@/lib/api-public" to avoid
+// pulling Clerk's server-only modules into the client bundle.
+export { fetchGlobalLeaderboard, type ApiLeaderboardRow } from "./api-public";
